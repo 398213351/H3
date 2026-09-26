@@ -1,0 +1,9 @@
+# Runtime artifacts
+.env
+gateway.db
+gateway.log
+videos/
+uploads/
+__pycache__/
+*.pyc
+.venv/

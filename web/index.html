@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>H3 片场 · MiniMax H3 图生视频</title>
+<meta name="description" content="手绘拼贴风的 MiniMax H3 图生视频创作台 — 一张图 + 一句描述，拍成 6–15 秒电影镜头。" />
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='14' fill='%23e0532f'/%3E%3Ctext x='16' y='21' font-family='Arial' font-size='13' font-weight='800' fill='%23f6f1e5' text-anchor='middle'%3EH3%3C/text%3E%3C/svg%3E" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Caveat:wght@600;700&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+<!-- paper grain overlay -->
+<div class="paper-grain" aria-hidden="true"></div>
+
+<!-- sticky-note status -->
+<div id="note" class="note" role="status" aria-live="polite"><span id="note-text">引擎预热中…</span></div>
+
+<!-- ═══ header strip ═══ -->
+<header class="mast">
+  <div class="mast-inner">
+    <a class="brand" href="#top">
+      <span class="stamp">H3</span>
+      <span class="brand-word">片场<small>纸上工作室</small></span>
+    </a>
+    <div class="mast-right">
+      <span class="mast-tag">一张图 → 一段电影</span>
+    </div>
+  </div>
+</header>
+
+<main id="top">
+
+  <!-- ═══ hero ═══ -->
+  <section class="hero">
+    <p class="kicker">
+      <svg class="doodle-circle" viewBox="0 0 90 34" aria-hidden="true"><path d="M6 20 C 10 6, 78 2, 85 14 C 90 24, 30 33, 12 28 C 2 25, 4 18, 14 14" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg>
+      MINIMAX H3 · 图生视频
+    </p>
+    <h1>把<em class="hl">一张图</em><br />拍成一段电影</h1>
+    <p class="lede">丢进来一张静止的画面，写一句想要的镜头语言——<br class="br-pc" />H3 会让光影、人群、蒸汽和时间一起流动起来，最长 15 秒。</p>
+    <svg class="hero-arrow" viewBox="0 0 120 60" aria-hidden="true"><path d="M8 8 C 50 6, 96 14, 100 44 M100 44 l -10 -12 M100 44 l 12 -8" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+  </section>
+
+  <!-- ═══ composer ═══ -->
+  <section class="composer card" id="composer">
+    <span class="tape tape-tl" aria-hidden="true"></span>
+    <span class="tape tape-tr" aria-hidden="true"></span>
+    <p class="card-label">工作台 · WORKBENCH</p>
+
+    <!-- dropzone -->
+    <div id="drop" class="drop" tabindex="0" role="button" aria-label="上传参考图片">
+      <input id="file" type="file" accept="image/jpeg,image/png,image/webp" hidden />
+      <div class="drop-idle" id="drop-idle">
+        <svg class="drop-doodle" viewBox="0 0 60 46" aria-hidden="true"><path d="M8 38 C 6 18, 22 8, 30 8 C 44 8, 52 20, 50 34 M30 8 L30 26 M22 16 L30 8 L38 16" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/><path d="M10 40 Q 30 46 52 38" fill="none" stroke="currentColor" stroke-width="2" stroke-dasharray="4 5" stroke-linecap="round"/></svg>
+        <p class="drop-title">把图丢到这里</p>
+        <p class="drop-sub">点击浏览 · 或直接粘贴剪贴板截图 · JPG / PNG / WebP ≤ 20MB</p>
+      </div>
+      <div class="drop-preview" id="drop-preview" hidden>
+        <img id="thumb" alt="参考图预览" />
+        <div class="drop-meta">
+          <strong id="fname"></strong>
+          <small id="fsize"></small>
+        </div>
+        <button class="drop-clear" id="clear" title="移除图片" aria-label="移除图片">✕</button>
+      </div>
+    </div>
+
+    <!-- prompt -->
+    <div class="prompt-wrap">
+      <label class="field-label" for="prompt">镜头描述 <span class="hand">想让它怎么动？</span></label>
+      <textarea id="prompt" rows="2" maxlength="800" placeholder="例：镜头缓慢推近，蒸汽从碗里升起，暖光穿过窗户…"></textarea>
+    </div>
+
+    <!-- controls -->
+    <div class="controls">
+      <div class="ctl-group">
+        <span class="field-label">画幅</span>
+        <div class="chips" id="seg-ratio">
+          <button data-v="9:16" class="is-on">9:16</button>
+        </div>
+      </div>
+      <div class="ctl-group">
+        <span class="field-label">时长</span>
+        <div class="chips" id="seg-dur">
+          <button data-v="6" class="is-on">6s</button>
+          <button data-v="10">10s</button>
+          <button data-v="15">15s</button>
+        </div>
+      </div>
+      <button class="cta" id="gen" disabled>
+        <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="13" height="12" rx="3"/><path d="m16 11 5-3v9l-5-3"/><path d="M6 7l2-4M10 7l2-4"/></svg>
+        <span id="gen-label">开拍</span>
+      </button>
+    </div>
+
+    <!-- progress -->
+    <div class="progress" id="progress" hidden>
+      <div class="progress-head"><span id="progress-text">提交任务…</span><span class="hand" id="progress-note">渲染一般要 1–6 分钟</span></div>
+      <div class="progress-rail"><i id="progress-bar"></i></div>
+    </div>
+  </section>
+
+  <!-- ═══ result ═══ -->
+  <section class="result card" id="result" hidden>
+    <span class="stamp stamp-done" aria-hidden="true">成片</span>
+    <div class="result-head">
+      <div>
+        <p class="card-label">成片 · YOUR CUT</p>
+        <h2 id="result-title">影像出炉</h2>
+      </div>
+      <div class="result-actions">
+        <a class="btn" id="dl" href="#" download>↓ 下载 MP4</a>
+        <button class="btn" id="copy">复制链接</button>
+        <button class="btn btn-ghost" id="again">再来一版</button>
+      </div>
+    </div>
+    <div class="photo">
+      <span class="tape tape-tl"></span><span class="tape tape-tr"></span>
+      <video id="video" controls playsinline loop></video>
+    </div>
+  </section>
+
+  <!-- ═══ history ═══ -->
+  <section class="history" id="history-wrap" hidden>
+    <p class="sec-label">— 最近拍的 —</p>
+    <div class="history-row" id="history"></div>
+  </section>
+
+  <!-- ═══ examples ═══ -->
+  <section class="examples">
+    <div class="examples-head">
+      <h2><span class="hl hl-blue">灵感样片</span>，点一张就开拍</h2>
+      <p class="examples-sub hand">H3 真实成片的画面帧，直接当输入用 ↑</p>
+    </div>
+    <div class="exgrid" id="exgrid"></div>
+  </section>
+
+</main>
+
+<footer class="foot">
+  <span>H3 片场 · Make something that moves.</span>
+  <span class="hand">paper, ink &amp; pixels</span>
+</footer>
+
+<div id="toast" class="toast" hidden></div>
+<script src="app.js"></script>
+</body>
+</html>

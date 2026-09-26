@@ -1,0 +1,18 @@
+[Unit]
+# 部署: sudo cp h3-gateway.service /etc/systemd/system/ && sudo systemctl enable --now h3-gateway
+Description=H3 Studio - MiniMax H3 image-to-video gateway
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+# 改成实际部署路径和运行用户
+WorkingDirectory=/opt/h3-studio-gateway
+ExecStart=/opt/h3-studio-gateway/.venv/bin/python gateway.py
+Restart=always
+RestartSec=3
+EnvironmentFile=-/opt/h3-studio-gateway/.env
+# 日志: journalctl -u h3-gateway -f
+
+[Install]
+WantedBy=multi-user.target
